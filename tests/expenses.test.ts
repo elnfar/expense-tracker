@@ -13,6 +13,11 @@ describe('Expenses API', () => {
     await prismaService.disconnect();
   });
 
+  beforeEach(async () => {
+    // Clean up database before each test
+    await prismaService.getClient().expense.deleteMany();
+  });
+
   describe('POST /api/expenses', () => {
     it('should create a new expense with valid data', async () => {
       const expenseData = {
@@ -98,13 +103,257 @@ describe('Expenses API', () => {
   });
 
   describe('GET /api/expenses', () => {
-    it('should return all expenses', async () => {
+    beforeEach(async () => {
+      // Create test data for pagination and filtering tests
+      const testExpenses = [
+        {
+          name: 'Lunch',
+          amount: 12.5,
+          currency: 'USD',
+          category: 'Food & Drink',
+          date: new Date('2024-01-15T12:00:00.000Z'),
+        },
+        {
+          name: 'Gas',
+          amount: 45.0,
+          currency: 'USD',
+          category: 'Transportation',
+          date: new Date('2024-01-16T08:30:00.000Z'),
+        },
+        {
+          name: 'Coffee',
+          amount: 4.5,
+          currency: 'USD',
+          category: 'Food & Drink',
+          date: new Date('2024-01-17T09:15:00.000Z'),
+        },
+        {
+          name: 'Uber',
+          amount: 15.75,
+          currency: 'USD',
+          category: 'Transportation',
+          date: new Date('2024-01-18T18:45:00.000Z'),
+        },
+        {
+          name: 'Groceries',
+          amount: 87.25,
+          currency: 'USD',
+          category: 'Food & Drink',
+          date: new Date('2024-01-19T14:20:00.000Z'),
+        },
+      ];
+
+      for (const expense of testExpenses) {
+        await prismaService.getClient().expense.create({ data: expense });
+      }
+    });
+
+    it('should return all expenses without query parameters', async () => {
       const response = await request(app).get('/api/expenses').expect(200);
 
       expect(response.body).toMatchObject({
         success: true,
         data: expect.any(Array),
-        count: expect.any(Number),
+        count: 5,
+        pagination: null,
+      });
+
+      expect(response.body.data).toHaveLength(5);
+      // Should be ordered by date desc, then id desc
+      expect(response.body.data[0].name).toBe('Groceries');
+      expect(response.body.data[4].name).toBe('Lunch');
+    });
+
+    it('should return paginated expenses with limit', async () => {
+      const response = await request(app)
+        .get('/api/expenses?limit=3')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: expect.any(Array),
+        count: 3,
+        pagination: {
+          total: 5,
+          limit: 3,
+          offset: 0,
+          hasNext: true,
+          hasPrevious: false,
+          pages: 2,
+          currentPage: 1,
+        },
+      });
+
+      expect(response.body.data).toHaveLength(3);
+    });
+
+    it('should return paginated expenses with limit and offset', async () => {
+      const response = await request(app)
+        .get('/api/expenses?limit=2&offset=2')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: expect.any(Array),
+        count: 2,
+        pagination: {
+          total: 5,
+          limit: 2,
+          offset: 2,
+          hasNext: true,
+          hasPrevious: true,
+          pages: 3,
+          currentPage: 2,
+        },
+      });
+
+      expect(response.body.data).toHaveLength(2);
+    });
+
+    it('should filter expenses by date range', async () => {
+      const response = await request(app)
+        .get(
+          '/api/expenses?fromDate=2024-01-16T00:00:00.000Z&toDate=2024-01-17T23:59:59.999Z'
+        )
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: expect.any(Array),
+        count: 2,
+        pagination: null,
+      });
+
+      expect(response.body.data).toHaveLength(2);
+      // Should include Gas (Jan 16) and Coffee (Jan 17)
+      const names = response.body.data.map((expense: any) => expense.name);
+      expect(names).toContain('Gas');
+      expect(names).toContain('Coffee');
+    });
+
+    it('should filter expenses by category', async () => {
+      const response = await request(app)
+        .get('/api/expenses?category=Transportation')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: expect.any(Array),
+        count: 2,
+        pagination: null,
+      });
+
+      expect(response.body.data).toHaveLength(2);
+      // Should include Gas and Uber
+      const names = response.body.data.map((expense: any) => expense.name);
+      expect(names).toContain('Gas');
+      expect(names).toContain('Uber');
+    });
+
+    it('should combine pagination and filtering', async () => {
+      const response = await request(app)
+        .get('/api/expenses?category=Food%20%26%20Drink&limit=2&offset=0')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: expect.any(Array),
+        count: 2,
+        pagination: {
+          total: 3, // 3 Food & Drink expenses total
+          limit: 2,
+          offset: 0,
+          hasNext: true,
+          hasPrevious: false,
+          pages: 2,
+          currentPage: 1,
+        },
+      });
+
+      expect(response.body.data).toHaveLength(2);
+    });
+
+    it('should validate pagination parameters', async () => {
+      const response = await request(app)
+        .get('/api/expenses?limit=invalid')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: expect.stringContaining('Limit must be a positive integer'),
+      });
+    });
+
+    it('should validate date parameters', async () => {
+      const response = await request(app)
+        .get('/api/expenses?fromDate=invalid-date')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: expect.stringContaining(
+          'fromDate must be a valid ISO date string'
+        ),
+      });
+    });
+
+    it('should reject limit over 100', async () => {
+      const response = await request(app)
+        .get('/api/expenses?limit=150')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: expect.stringContaining('Limit cannot exceed 100'),
+      });
+    });
+
+    it('should validate date range order', async () => {
+      const response = await request(app)
+        .get(
+          '/api/expenses?fromDate=2024-01-20T00:00:00.000Z&toDate=2024-01-15T00:00:00.000Z'
+        )
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: expect.stringContaining('fromDate cannot be after toDate'),
+      });
+    });
+
+    it('should return empty results for out-of-range dates', async () => {
+      const response = await request(app)
+        .get(
+          '/api/expenses?fromDate=2025-01-01T00:00:00.000Z&toDate=2025-01-31T23:59:59.999Z'
+        )
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: [],
+        count: 0,
+        pagination: null,
+      });
+    });
+
+    it('should handle offset beyond available records', async () => {
+      const response = await request(app)
+        .get('/api/expenses?limit=5&offset=10')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: [],
+        count: 0,
+        pagination: {
+          total: 5,
+          limit: 5,
+          offset: 10,
+          hasNext: false,
+          hasPrevious: true,
+          pages: 1,
+          currentPage: 3,
+        },
       });
     });
   });

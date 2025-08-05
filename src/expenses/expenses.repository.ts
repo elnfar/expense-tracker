@@ -1,6 +1,29 @@
 import { PrismaClient, Expense } from '@prisma/client';
 import { prismaService } from '../db/prisma.service';
 
+export interface PaginationOptions {
+  limit?: number;
+  offset?: number;
+}
+
+export interface DateFilterOptions {
+  fromDate?: Date;
+  toDate?: Date;
+}
+
+export interface FindAllOptions extends PaginationOptions, DateFilterOptions {
+  category?: string;
+}
+
+export interface PaginatedExpensesResult {
+  expenses: Expense[];
+  total: number;
+  limit: number;
+  offset: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 export class ExpensesRepository {
   private prisma: PrismaClient;
 
@@ -22,15 +45,99 @@ export class ExpensesRepository {
     }
   }
 
-  // Get all expenses
-  public async findAll(): Promise<Expense[]> {
+  // Get all expenses with optional pagination and filtering
+  public async findAll(options: FindAllOptions = {}): Promise<Expense[]> {
     try {
-      return await this.prisma.expense.findMany({
+      const where: Record<string, unknown> = {};
+
+      // Add date filtering
+      if (options.fromDate || options.toDate) {
+        const dateFilter: Record<string, Date> = {};
+        if (options.fromDate) {
+          dateFilter['gte'] = options.fromDate;
+        }
+        if (options.toDate) {
+          dateFilter['lte'] = options.toDate;
+        }
+        where['date'] = dateFilter;
+      }
+
+      // Add category filtering
+      if (options.category) {
+        where['category'] = options.category;
+      }
+
+      // Build query options
+      const queryOptions: Parameters<typeof this.prisma.expense.findMany>[0] = {
+        where,
         orderBy: [{ date: 'desc' }, { id: 'desc' }],
-      });
+      };
+
+      // Add pagination only if values are defined
+      if (options.offset !== undefined) {
+        queryOptions.skip = options.offset;
+      }
+      if (options.limit !== undefined) {
+        queryOptions.take = options.limit;
+      }
+
+      return await this.prisma.expense.findMany(queryOptions);
     } catch (error) {
       console.error('Error fetching expenses:', error);
       throw new Error(`Failed to fetch expenses: ${error}`);
+    }
+  }
+
+  // Get paginated expenses with filtering
+  public async findAllPaginated(
+    options: FindAllOptions = {}
+  ): Promise<PaginatedExpensesResult> {
+    try {
+      const where: Record<string, unknown> = {};
+
+      // Add date filtering
+      if (options.fromDate || options.toDate) {
+        const dateFilter: Record<string, Date> = {};
+        if (options.fromDate) {
+          dateFilter['gte'] = options.fromDate;
+        }
+        if (options.toDate) {
+          dateFilter['lte'] = options.toDate;
+        }
+        where['date'] = dateFilter;
+      }
+
+      // Add category filtering
+      if (options.category) {
+        where['category'] = options.category;
+      }
+
+      // Set default pagination values
+      const limit = options.limit || 10;
+      const offset = options.offset || 0;
+
+      // Get expenses and total count in parallel
+      const [expenses, total] = await Promise.all([
+        this.prisma.expense.findMany({
+          where,
+          orderBy: [{ date: 'desc' }, { id: 'desc' }],
+          skip: offset,
+          take: limit,
+        }),
+        this.prisma.expense.count({ where }),
+      ]);
+
+      return {
+        expenses,
+        total,
+        limit,
+        offset,
+        hasNext: offset + limit < total,
+        hasPrevious: offset > 0,
+      };
+    } catch (error) {
+      console.error('Error fetching paginated expenses:', error);
+      throw new Error(`Failed to fetch paginated expenses: ${error}`);
     }
   }
 
@@ -174,6 +281,37 @@ export class ExpensesRepository {
     } catch (error) {
       console.error('Error getting total amount:', error);
       throw new Error(`Failed to get total amount: ${error}`);
+    }
+  }
+
+  // Get total count with filters
+  public async getTotalCountWithFilters(
+    options: DateFilterOptions & { category?: string }
+  ): Promise<number> {
+    try {
+      const where: Record<string, unknown> = {};
+
+      // Add date filtering
+      if (options.fromDate || options.toDate) {
+        const dateFilter: Record<string, Date> = {};
+        if (options.fromDate) {
+          dateFilter['gte'] = options.fromDate;
+        }
+        if (options.toDate) {
+          dateFilter['lte'] = options.toDate;
+        }
+        where['date'] = dateFilter;
+      }
+
+      // Add category filtering
+      if (options.category) {
+        where['category'] = options.category;
+      }
+
+      return await this.prisma.expense.count({ where });
+    } catch (error) {
+      console.error('Error getting filtered count:', error);
+      throw new Error(`Failed to get filtered count: ${error}`);
     }
   }
 }

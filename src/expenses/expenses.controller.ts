@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
-import { ExpensesService, CreateExpenseDto } from './expenses.service';
+import {
+  ExpensesService,
+  CreateExpenseDto,
+  GetExpensesQuery,
+} from './expenses.service';
 import {
   catchAsync,
   createNotFoundError,
 } from '../helpers/middlewares/errorHandler';
 import Logger from '../helpers/Logger';
+import { PaginatedExpensesResult } from './expenses.repository';
 
 // Extend Request interface to include our custom properties
 interface RequestWithExpenseId extends Request {
@@ -39,18 +44,66 @@ export class ExpensesController {
     }
   );
 
-  // Get all expenses
+  // Get all expenses with optional pagination and filtering
   public getAllExpenses = catchAsync(
-    async (_req: Request, res: Response): Promise<void> => {
-      Logger.debug('Fetching all expenses');
-      const expenses = await this.expensesService.getAllExpenses();
+    async (req: Request, res: Response): Promise<void> => {
+      const query: GetExpensesQuery = {
+        limit: req.query['limit'] as string,
+        offset: req.query['offset'] as string,
+        fromDate: req.query['fromDate'] as string,
+        toDate: req.query['toDate'] as string,
+        category: req.query['category'] as string,
+      };
 
-      Logger.debug(`Retrieved ${expenses.length} expenses`);
-      res.status(200).json({
-        success: true,
-        data: expenses,
-        count: expenses.length,
+      // Remove undefined values
+      Object.keys(query).forEach((key) => {
+        if (query[key as keyof GetExpensesQuery] === undefined) {
+          delete query[key as keyof GetExpensesQuery];
+        }
       });
+
+      Logger.debug('Fetching expenses with query parameters', query);
+
+      const result = await this.expensesService.getAllExpenses(query);
+
+      // Check if result is paginated or simple array
+      if (Array.isArray(result)) {
+        // Simple array response
+        Logger.debug(`Retrieved ${result.length} expenses`);
+        res.status(200).json({
+          success: true,
+          data: result,
+          count: result.length,
+          pagination: null,
+        });
+      } else {
+        // Paginated response
+        const paginatedResult = result as PaginatedExpensesResult;
+        Logger.debug(
+          `Retrieved ${paginatedResult.expenses.length} expenses (paginated)`,
+          {
+            total: paginatedResult.total,
+            limit: paginatedResult.limit,
+            offset: paginatedResult.offset,
+          }
+        );
+
+        res.status(200).json({
+          success: true,
+          data: paginatedResult.expenses,
+          count: paginatedResult.expenses.length,
+          pagination: {
+            total: paginatedResult.total,
+            limit: paginatedResult.limit,
+            offset: paginatedResult.offset,
+            hasNext: paginatedResult.hasNext,
+            hasPrevious: paginatedResult.hasPrevious,
+            pages: Math.ceil(paginatedResult.total / paginatedResult.limit),
+            currentPage:
+              Math.floor(paginatedResult.offset / paginatedResult.limit) + 1,
+          },
+        });
+      }
     }
   );
 
