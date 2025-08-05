@@ -169,27 +169,59 @@ export class ExpensesService {
         throw createValidationError('No update data provided');
       }
 
-      // Validate update data
+      // Filter out invalid fields and only keep valid expense fields
+      const filteredUpdateData: Partial<
+        Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>
+      > = {};
+
+      // Only include fields that are valid and defined
+      if (updateData.name !== undefined) {
+        filteredUpdateData.name = updateData.name;
+      }
+      if (updateData.amount !== undefined) {
+        filteredUpdateData.amount = updateData.amount;
+      }
+      if (updateData.currency !== undefined) {
+        filteredUpdateData.currency = updateData.currency;
+      }
+      if (updateData.category !== undefined) {
+        filteredUpdateData.category = updateData.category;
+      }
+      if (updateData.date !== undefined) {
+        filteredUpdateData.date = updateData.date;
+      }
+
+      // Check if we have any valid fields after filtering
+      if (Object.keys(filteredUpdateData).length === 0) {
+        throw createValidationError('No valid update fields provided');
+      }
+
+      // Validate filtered update data
       if (
-        updateData.amount !== undefined &&
-        (typeof updateData.amount !== 'number' || updateData.amount <= 0)
+        filteredUpdateData.amount !== undefined &&
+        (typeof filteredUpdateData.amount !== 'number' ||
+          filteredUpdateData.amount <= 0)
       ) {
         throw createValidationError('Amount must be a positive number');
       }
 
       if (
-        updateData.name !== undefined &&
-        (!updateData.name || updateData.name.trim().length === 0)
+        filteredUpdateData.name !== undefined &&
+        (!filteredUpdateData.name ||
+          filteredUpdateData.name.trim().length === 0)
       ) {
         throw createValidationError('Name cannot be empty');
       }
 
       // Convert string date to Date object if provided
-      if (updateData.date && typeof updateData.date === 'string') {
-        updateData.date = new Date(updateData.date);
+      if (
+        filteredUpdateData.date &&
+        typeof filteredUpdateData.date === 'string'
+      ) {
+        filteredUpdateData.date = new Date(filteredUpdateData.date);
       }
 
-      return await this.expensesRepository.update(id, updateData);
+      return await this.expensesRepository.update(id, filteredUpdateData);
     } catch (error) {
       console.error('Service error updating expense:', error);
       throw error;

@@ -213,6 +213,338 @@ describe('Expenses API', () => {
     });
   });
 
+  describe('PATCH /api/expenses/:id', () => {
+    let createdExpense: any;
+
+    beforeEach(async () => {
+      // Create a test expense for update tests
+      const expenseData = {
+        name: 'Original Expense',
+        amount: 50.0,
+        currency: 'USD',
+        category: 'Original Category',
+        date: new Date('2024-01-15T10:00:00.000Z'),
+      };
+
+      createdExpense = await prismaService
+        .getClient()
+        .expense.create({ data: expenseData });
+    });
+
+    it('should update a single field (name) of an expense', async () => {
+      const updateData = {
+        name: 'Updated Expense Name',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        message: 'Expense updated successfully',
+        data: {
+          id: createdExpense.id,
+          name: 'Updated Expense Name',
+          amount: 50.0, // Should remain unchanged
+          currency: 'USD', // Should remain unchanged
+          category: 'Original Category', // Should remain unchanged
+          date: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      });
+
+      // Verify the updatedAt timestamp is different from createdAt
+      expect(response.body.data.updatedAt).not.toBe(
+        response.body.data.createdAt
+      );
+    });
+
+    it('should update multiple fields of an expense', async () => {
+      const updateData = {
+        name: 'Updated Name',
+        amount: 75.5,
+        category: 'Updated Category',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        message: 'Expense updated successfully',
+        data: {
+          id: createdExpense.id,
+          name: 'Updated Name',
+          amount: 75.5,
+          currency: 'USD', // Should remain unchanged
+          category: 'Updated Category',
+          date: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      });
+    });
+
+    it('should update all fields of an expense', async () => {
+      const updateData = {
+        name: 'Completely Updated',
+        amount: 100.25,
+        currency: 'EUR',
+        category: 'New Category',
+        date: '2024-02-01T15:30:00.000Z',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        message: 'Expense updated successfully',
+        data: {
+          id: createdExpense.id,
+          name: 'Completely Updated',
+          amount: 100.25,
+          currency: 'EUR',
+          category: 'New Category',
+          date: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      });
+
+      // Verify the date was updated correctly
+      expect(new Date(response.body.data.date)).toEqual(
+        new Date('2024-02-01T15:30:00.000Z')
+      );
+    });
+
+    it('should return 404 for non-existent expense ID', async () => {
+      const nonExistentId = 99999;
+      const updateData = { name: 'Updated Name' };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${nonExistentId}`)
+        .send(updateData)
+        .expect(404);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        status: 'fail',
+        error: 'Expense not found',
+      });
+    });
+
+    it('should return 400 for invalid expense ID format', async () => {
+      const updateData = { name: 'Updated Name' };
+
+      const response = await request(app)
+        .patch('/api/expenses/invalid-id')
+        .send(updateData)
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for decimal expense ID', async () => {
+      const updateData = { name: 'Updated Name' };
+
+      const response = await request(app)
+        .patch('/api/expenses/1.5')
+        .send(updateData)
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for empty update data', async () => {
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send({})
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'general',
+            message: 'At least one field must be provided for update',
+          }),
+        ]),
+      });
+    });
+
+    it('should validate individual field updates', async () => {
+      const invalidUpdateData = {
+        name: '', // Invalid: empty name
+        amount: -10, // Invalid: negative amount
+        currency: 'US', // Invalid: not 3 characters
+        category: '', // Invalid: empty category
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(invalidUpdateData)
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Validation failed',
+        details: expect.any(Array),
+      });
+
+      expect(response.body.details.length).toBeGreaterThan(0);
+
+      // Check for specific validation errors
+      const errorFields = response.body.details.map(
+        (detail: any) => detail.field
+      );
+      expect(errorFields).toContain('name');
+      expect(errorFields).toContain('amount');
+      expect(errorFields).toContain('currency');
+      expect(errorFields).toContain('category');
+    });
+
+    it('should validate date format in updates', async () => {
+      const updateData = {
+        date: 'invalid-date-format',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'date',
+            message: expect.stringContaining('valid ISO string'),
+          }),
+        ]),
+      });
+    });
+
+    it('should allow partial updates with only valid fields', async () => {
+      const updateData = {
+        amount: 25.99, // Valid field
+        invalidField: 'should be ignored', // Invalid field should be ignored
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        message: 'Expense updated successfully',
+        data: {
+          id: createdExpense.id,
+          name: 'Original Expense', // Should remain unchanged
+          amount: 25.99, // Should be updated
+          currency: 'USD', // Should remain unchanged
+          category: 'Original Category', // Should remain unchanged
+          date: expect.any(String),
+        },
+      });
+
+      // Verify the invalid field was not added to the response
+      expect(response.body.data).not.toHaveProperty('invalidField');
+    });
+
+    it('should handle very large amounts correctly', async () => {
+      const updateData = {
+        amount: 999999.99,
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body.data.amount).toBe(999999.99);
+    });
+
+    it('should handle currency updates correctly', async () => {
+      const updateData = {
+        currency: 'GBP',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body.data.currency).toBe('GBP');
+    });
+
+    it('should preserve precision for decimal amounts', async () => {
+      const updateData = {
+        amount: 12.345,
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body.data.amount).toBe(12.345);
+    });
+
+    it('should handle unicode characters in name and category', async () => {
+      const updateData = {
+        name: 'Coffee ☕ & Pastry 🥐',
+        category: 'Food & Drink 🍽️',
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(200);
+
+      expect(response.body.data.name).toBe('Coffee ☕ & Pastry 🥐');
+      expect(response.body.data.category).toBe('Food & Drink 🍽️');
+    });
+
+    it('should reject updates with amount exceeding maximum', async () => {
+      const updateData = {
+        amount: 10000000, // Exceeds the maximum allowed amount
+      };
+
+      const response = await request(app)
+        .patch(`/api/expenses/${createdExpense.id}`)
+        .send(updateData)
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Validation failed',
+        details: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'amount',
+            message: expect.stringContaining('cannot exceed'),
+          }),
+        ]),
+      });
+    });
+  });
+
   describe('GET /api/expenses', () => {
     beforeEach(async () => {
       // Create test data for pagination and filtering tests

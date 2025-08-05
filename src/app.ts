@@ -116,6 +116,14 @@ app.put(
   expensesController.updateExpense
 );
 
+// PATCH /api/expenses/:id - Partially update expense (with validation)
+app.patch(
+  '/api/expenses/:id',
+  validateExpenseId,
+  validateUpdateExpense,
+  expensesController.updateExpense
+);
+
 // DELETE /api/expenses/:id - Delete expense (with ID validation)
 app.delete(
   '/api/expenses/:id',
