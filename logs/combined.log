@@ -1,0 +1,32 @@
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m✅ Prisma service initialized\u001b[39m","timestamp":"2025-08-05 16:49:04:494"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🚀 Server is running on port 8080\u001b[39m","timestamp":"2025-08-05 16:49:04:494"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m📍 Environment: development\u001b[39m","timestamp":"2025-08-05 16:49:04:494"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🔗 Health check: http://localhost:8080/health\u001b[39m","timestamp":"2025-08-05 16:49:04:494"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m💰 Expenses API: http://localhost:8080/api/expenses\u001b[39m","timestamp":"2025-08-05 16:49:04:494"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mSIGTERM received. Shutting down gracefully...\u001b[39m","timestamp":"2025-08-05 16:49:49:4949"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mServer closed.\u001b[39m","timestamp":"2025-08-05 16:49:49:4949"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m✅ Prisma service initialized\u001b[39m","timestamp":"2025-08-05 16:49:55:4955"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🚀 Server is running on port 8080\u001b[39m","timestamp":"2025-08-05 16:49:55:4955"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m📍 Environment: development\u001b[39m","timestamp":"2025-08-05 16:49:55:4955"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🔗 Health check: http://localhost:8080/health\u001b[39m","timestamp":"2025-08-05 16:49:55:4955"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m💰 Expenses API: http://localhost:8080/api/expenses\u001b[39m","timestamp":"2025-08-05 16:49:55:4955"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /health - ::1\u001b[39m","timestamp":"2025-08-05 16:50:04:504"}
+{"database":"connected","environment":"development","level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mHealth check performed\u001b[39m","port":8080,"status":"OK","timestamp":"2025-08-05 16:50:04:504"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-05 16:50:07:507"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33mValidation failed: [{\"field\":\"amount\",\"message\":\"amount is required\"},{\"field\":\"currency\",\"message\":\"currency is required\"},{\"field\":\"category\",\"message\":\"category is required\"}]\u001b[39m","timestamp":"2025-08-05 16:50:07:507"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-05 16:50:12:5012"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-05 16:50:12:5012"}
+{"amount":25.5,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"Valid Expense","timestamp":"2025-08-05 16:50:12:5012"}
+{"id":3,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-05 16:50:12:5012"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-05 16:50:14:5014"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching all expenses\u001b[39m","timestamp":"2025-08-05 16:50:14:5014"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 3 expenses\u001b[39m","timestamp":"2025-08-05 16:50:14:5014"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/nonexistent - ::1\u001b[39m","timestamp":"2025-08-05 16:50:17:5017"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33m404 - Route not found: GET /api/nonexistent\u001b[39m","timestamp":"2025-08-05 16:50:17:5017"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api - ::1\u001b[39m","timestamp":"2025-08-05 16:50:21:5021"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mAPI routes summary accessed\u001b[39m","timestamp":"2025-08-05 16:50:21:5021"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mSIGTERM received. Shutting down gracefully...\u001b[39m","timestamp":"2025-08-05 16:50:33:5033"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mServer closed.\u001b[39m","timestamp":"2025-08-05 16:50:33:5033"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33mValidation failed: [{\"field\":\"name\",\"message\":\"name is required\"},{\"field\":\"amount\",\"message\":\"amount must be at least 0.01\"},{\"field\":\"currency\",\"message\":\"currency must be at least 3 characters long\"},{\"field\":\"currency\",\"message\":\"currency format is invalid\"},{\"field\":\"category\",\"message\":\"category is required\"}]\u001b[39m","timestamp":"2025-08-05 16:50:37:5037"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33mValidation failed: [{\"field\":\"amount\",\"message\":\"amount is required\"},{\"field\":\"currency\",\"message\":\"currency is required\"},{\"field\":\"category\",\"message\":\"category is required\"}]\u001b[39m","timestamp":"2025-08-05 16:50:37:5037"}
+{"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33m404 - Route not found: GET /api/unknown-route\u001b[39m","timestamp":"2025-08-05 16:50:37:5037"}

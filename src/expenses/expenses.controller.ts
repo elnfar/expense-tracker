@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
 import { ExpensesService, CreateExpenseDto } from './expenses.service';
+import {
+  catchAsync,
+  createNotFoundError,
+} from '../helpers/middlewares/errorHandler';
+import Logger from '../helpers/Logger';
+
+// Extend Request interface to include our custom properties
+interface RequestWithExpenseId extends Request {
+  expenseId: number;
+}
 
 export class ExpensesController {
   private expensesService: ExpensesService;
@@ -9,107 +19,67 @@ export class ExpensesController {
   }
 
   // Create a new expense
-  public createExpense = async (req: Request, res: Response): Promise<void> => {
-    try {
+  public createExpense = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
       const createExpenseDto: CreateExpenseDto = req.body;
+      Logger.info('Creating new expense', {
+        name: createExpenseDto.name,
+        amount: createExpenseDto.amount,
+      });
+
       const expense =
         await this.expensesService.createExpense(createExpenseDto);
 
+      Logger.info('Expense created successfully', { id: expense.id });
       res.status(201).json({
         success: true,
         data: expense,
         message: 'Expense created successfully',
       });
-    } catch (error) {
-      console.error('Controller error creating expense:', error);
-      res.status(400).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : 'Failed to create expense',
-      });
     }
-  };
+  );
 
   // Get all expenses
-  public getAllExpenses = async (
-    _req: Request,
-    res: Response
-  ): Promise<void> => {
-    try {
+  public getAllExpenses = catchAsync(
+    async (_req: Request, res: Response): Promise<void> => {
+      Logger.debug('Fetching all expenses');
       const expenses = await this.expensesService.getAllExpenses();
 
+      Logger.debug(`Retrieved ${expenses.length} expenses`);
       res.status(200).json({
         success: true,
         data: expenses,
         count: expenses.length,
       });
-    } catch (error) {
-      console.error('Controller error fetching expenses:', error);
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : 'Failed to fetch expenses',
-      });
     }
-  };
+  );
 
   // Get expense by ID
-  public getExpenseById = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    try {
-      const idParam = req.params['id'];
-
-      if (!idParam) {
-        res.status(400).json({
-          success: false,
-          error: 'Expense ID is required',
-        });
-        return;
-      }
-
-      const id = parseInt(idParam, 10);
-
-      if (isNaN(id)) {
-        res.status(400).json({
-          success: false,
-          error: 'Invalid expense ID',
-        });
-        return;
-      }
+  public getExpenseById = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const id = (req as RequestWithExpenseId).expenseId; // Set by validation middleware
+      Logger.debug('Fetching expense by ID', { id });
 
       const expense = await this.expensesService.getExpenseById(id);
 
       if (!expense) {
-        res.status(404).json({
-          success: false,
-          error: 'Expense not found',
-        });
-        return;
+        Logger.warn('Expense not found', { id });
+        throw createNotFoundError('Expense');
       }
 
+      Logger.debug('Expense retrieved successfully', { id });
       res.status(200).json({
         success: true,
         data: expense,
       });
-    } catch (error) {
-      console.error('Controller error fetching expense by ID:', error);
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : 'Failed to fetch expense',
-      });
     }
-  };
+  );
 
   // Get expenses by category
-  public getExpensesByCategory = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    try {
+  public getExpensesByCategory = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
       const { category } = req.query;
+      Logger.debug('Fetching expenses by category', { category });
 
       if (!category || typeof category !== 'string') {
         res.status(400).json({
@@ -122,31 +92,23 @@ export class ExpensesController {
       const expenses =
         await this.expensesService.getExpensesByCategory(category);
 
+      Logger.debug(
+        `Retrieved ${expenses.length} expenses for category: ${category}`
+      );
       res.status(200).json({
         success: true,
         data: expenses,
         count: expenses.length,
         category,
       });
-    } catch (error) {
-      console.error('Controller error fetching expenses by category:', error);
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to fetch expenses by category',
-      });
     }
-  };
+  );
 
   // Get expenses by date range
-  public getExpensesByDateRange = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    try {
+  public getExpensesByDateRange = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
       const { startDate, endDate } = req.query;
+      Logger.debug('Fetching expenses by date range', { startDate, endDate });
 
       if (
         !startDate ||
@@ -166,141 +128,78 @@ export class ExpensesController {
         endDate
       );
 
+      Logger.debug(
+        `Retrieved ${expenses.length} expenses for date range: ${startDate} to ${endDate}`
+      );
       res.status(200).json({
         success: true,
         data: expenses,
         count: expenses.length,
         dateRange: { startDate, endDate },
       });
-    } catch (error) {
-      console.error('Controller error fetching expenses by date range:', error);
-      res.status(400).json({
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to fetch expenses by date range',
-      });
     }
-  };
+  );
 
   // Update expense
-  public updateExpense = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const idParam = req.params['id'];
-
-      if (!idParam) {
-        res.status(400).json({
-          success: false,
-          error: 'Expense ID is required',
-        });
-        return;
-      }
-
-      const id = parseInt(idParam, 10);
-
-      if (isNaN(id)) {
-        res.status(400).json({
-          success: false,
-          error: 'Invalid expense ID',
-        });
-        return;
-      }
-
+  public updateExpense = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const id = (req as RequestWithExpenseId).expenseId; // Set by validation middleware
       const updateData = req.body;
+      Logger.info('Updating expense', { id, updateData });
+
       const expense = await this.expensesService.updateExpense(id, updateData);
 
       if (!expense) {
-        res.status(404).json({
-          success: false,
-          error: 'Expense not found',
-        });
-        return;
+        Logger.warn('Expense not found for update', { id });
+        throw createNotFoundError('Expense');
       }
 
+      Logger.info('Expense updated successfully', { id });
       res.status(200).json({
         success: true,
         data: expense,
         message: 'Expense updated successfully',
       });
-    } catch (error) {
-      console.error('Controller error updating expense:', error);
-      res.status(400).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : 'Failed to update expense',
-      });
     }
-  };
+  );
 
   // Delete expense
-  public deleteExpense = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const idParam = req.params['id'];
-
-      if (!idParam) {
-        res.status(400).json({
-          success: false,
-          error: 'Expense ID is required',
-        });
-        return;
-      }
-
-      const id = parseInt(idParam, 10);
-
-      if (isNaN(id)) {
-        res.status(400).json({
-          success: false,
-          error: 'Invalid expense ID',
-        });
-        return;
-      }
+  public deleteExpense = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const id = (req as RequestWithExpenseId).expenseId; // Set by validation middleware
+      Logger.info('Deleting expense', { id });
 
       const deleted = await this.expensesService.deleteExpense(id);
 
       if (!deleted) {
-        res.status(404).json({
-          success: false,
-          error: 'Expense not found',
-        });
-        return;
+        Logger.warn('Expense not found for deletion', { id });
+        throw createNotFoundError('Expense');
       }
 
+      Logger.info('Expense deleted successfully', { id });
       res.status(200).json({
         success: true,
         message: 'Expense deleted successfully',
-      });
-    } catch (error) {
-      console.error('Controller error deleting expense:', error);
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : 'Failed to delete expense',
+        deletedId: id,
       });
     }
-  };
+  );
 
   // Get expense statistics
-  public getExpenseStats = async (
-    _req: Request,
-    res: Response
-  ): Promise<void> => {
-    try {
+  public getExpenseStats = catchAsync(
+    async (_req: Request, res: Response): Promise<void> => {
+      Logger.debug('Fetching expense statistics');
       const stats = await this.expensesService.getExpenseStats();
 
+      Logger.debug('Expense statistics retrieved', {
+        totalAmount: stats.totalAmount,
+        totalCount: stats.totalCount,
+        categoriesCount: stats.categories.length,
+      });
       res.status(200).json({
         success: true,
         data: stats,
       });
-    } catch (error) {
-      console.error('Controller error fetching expense stats:', error);
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to fetch expense statistics',
-      });
     }
-  };
+  );
 }
