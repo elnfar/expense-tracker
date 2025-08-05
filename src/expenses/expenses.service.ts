@@ -1,4 +1,1 @@
-
-export class ExpensesService {
-  
-} 
+export class ExpensesService {}

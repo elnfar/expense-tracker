@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 
-
 export const errorHandler = (
   error: any,
   _req: Request,
@@ -16,7 +15,7 @@ export const errorHandler = (
     error: {
       message,
       status,
-      ...(process.env['NODE_ENV'] === 'development' && { stack: error.stack })
-    }
+      ...(process.env['NODE_ENV'] === 'development' && { stack: error.stack }),
+    },
   });
-}; 
+};

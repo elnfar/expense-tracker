@@ -16,10 +16,10 @@ app.get('/api/ping', (_req: Request, res: Response) => {
 
 // Health check route
 app.get('/health', (_req: Request, res: Response) => {
-  res.json({ 
+  res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    port: config.port
+    port: config.port,
   });
 });
 
@@ -45,4 +45,3 @@ export const startServer = (): void => {
 };
 
 export default app;
-  

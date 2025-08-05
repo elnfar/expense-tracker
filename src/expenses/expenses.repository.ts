@@ -1,3 +1,1 @@
-
-export class ExpensesRepository {
-} 
+export class ExpensesRepository {}

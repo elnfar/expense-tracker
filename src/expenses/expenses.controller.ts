@@ -1,4 +1,1 @@
-
-export class ExpensesController {
-  
-} 
+export class ExpensesController {}
