@@ -1,4 +1,5 @@
 // src/index.ts
-import { start } from "./app";
+import { startServer } from './app';
 
-start();
+// Start the Express server
+startServer();
