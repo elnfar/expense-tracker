@@ -13,9 +13,10 @@ export default tseslint.config(
       // TypeScript specific rules
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-empty-object-type": "off",
       
       // General rules
-      "no-console": "warn",
+      "no-console": "off", // Allow console.log in server-side code
       "prefer-const": "error",
       "no-var": "error",
     },

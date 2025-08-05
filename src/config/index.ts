@@ -6,12 +6,14 @@ dotenv.config();
 interface Config {
   port: number;
   databaseUrl: string;
+  databasePath: string;
   nodeEnv: string;
 }
 
 const config: Config = {
   port: parseInt(process.env['PORT'] || '8080', 10),
   databaseUrl: process.env['DATABASE_URL'] || '',
+  databasePath: process.env['DATABASE_PATH'] || './data/expenses.db',
   nodeEnv: process.env['NODE_ENV'] || 'development',
 };
 
