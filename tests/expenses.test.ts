@@ -545,6 +545,264 @@ describe('Expenses API', () => {
     });
   });
 
+  describe('DELETE /api/expenses/:id', () => {
+    let createdExpense: any;
+
+    beforeEach(async () => {
+      // Create a test expense for deletion tests
+      const expenseData = {
+        name: 'Expense to Delete',
+        amount: 99.99,
+        currency: 'USD',
+        category: 'Test Category',
+        date: new Date('2024-01-10T12:00:00.000Z'),
+      };
+
+      createdExpense = await prismaService
+        .getClient()
+        .expense.create({ data: expenseData });
+    });
+
+    it('should delete an expense by valid ID', async () => {
+      // First verify the expense exists
+      const existingExpense = await request(app)
+        .get(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      expect(existingExpense.body.data).toMatchObject({
+        id: createdExpense.id,
+        name: 'Expense to Delete',
+        amount: 99.99,
+      });
+
+      // Delete the expense
+      const response = await request(app)
+        .delete(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        message: 'Expense deleted successfully',
+        deletedId: createdExpense.id,
+      });
+
+      // Verify the expense no longer exists
+      await request(app).get(`/api/expenses/${createdExpense.id}`).expect(404);
+    });
+
+    it('should return 404 for non-existent expense ID', async () => {
+      const nonExistentId = 99999;
+
+      const response = await request(app)
+        .delete(`/api/expenses/${nonExistentId}`)
+        .expect(404);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        status: 'fail',
+        error: 'Expense not found',
+      });
+    });
+
+    it('should return 400 for invalid expense ID format', async () => {
+      const response = await request(app)
+        .delete('/api/expenses/invalid-id')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for negative expense ID', async () => {
+      const response = await request(app)
+        .delete('/api/expenses/-1')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for zero expense ID', async () => {
+      const response = await request(app).delete('/api/expenses/0').expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for decimal expense ID', async () => {
+      const response = await request(app)
+        .delete('/api/expenses/1.5')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should handle large valid expense ID', async () => {
+      const largeId = 2147483647; // Maximum 32-bit integer
+
+      const response = await request(app)
+        .delete(`/api/expenses/${largeId}`)
+        .expect(404); // Should return 404 since it doesn't exist, not 400
+
+      expect(response.body).toMatchObject({
+        success: false,
+        status: 'fail',
+        error: 'Expense not found',
+      });
+    });
+
+    it('should successfully delete and prevent duplicate deletion', async () => {
+      // Delete the expense first time
+      const firstDeleteResponse = await request(app)
+        .delete(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      expect(firstDeleteResponse.body).toMatchObject({
+        success: true,
+        message: 'Expense deleted successfully',
+        deletedId: createdExpense.id,
+      });
+
+      // Try to delete the same expense again - should return 404
+      const secondDeleteResponse = await request(app)
+        .delete(`/api/expenses/${createdExpense.id}`)
+        .expect(404);
+
+      expect(secondDeleteResponse.body).toMatchObject({
+        success: false,
+        status: 'fail',
+        error: 'Expense not found',
+      });
+    });
+
+    it('should delete expense and verify it is removed from list', async () => {
+      // Create multiple expenses
+      const expenseData2 = {
+        name: 'Another Expense',
+        amount: 50.0,
+        currency: 'USD',
+        category: 'Another Category',
+        date: new Date('2024-01-11T12:00:00.000Z'),
+      };
+
+      const secondExpense = await prismaService
+        .getClient()
+        .expense.create({ data: expenseData2 });
+
+      // Get all expenses before deletion
+      const beforeDelete = await request(app).get('/api/expenses').expect(200);
+
+      expect(beforeDelete.body.data.length).toBe(2);
+
+      // Delete one expense
+      await request(app)
+        .delete(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      // Get all expenses after deletion
+      const afterDelete = await request(app).get('/api/expenses').expect(200);
+
+      expect(afterDelete.body.data.length).toBe(1);
+      expect(afterDelete.body.data[0].id).toBe(secondExpense.id);
+      expect(afterDelete.body.data[0].name).toBe('Another Expense');
+
+      // Clean up the second expense
+      await request(app)
+        .delete(`/api/expenses/${secondExpense.id}`)
+        .expect(200);
+    });
+
+    it('should handle concurrent deletion attempts gracefully', async () => {
+      // This test simulates concurrent deletion attempts
+      // Both should handle gracefully without throwing errors
+
+      const deletePromise1 = request(app).delete(
+        `/api/expenses/${createdExpense.id}`
+      );
+
+      const deletePromise2 = request(app).delete(
+        `/api/expenses/${createdExpense.id}`
+      );
+
+      const [result1, result2] = await Promise.all([
+        deletePromise1,
+        deletePromise2,
+      ]);
+
+      // One should succeed (200), the other should fail (404)
+      const responses = [result1, result2];
+      const statusCodes = responses.map((r) => r.status).sort();
+
+      expect(statusCodes).toEqual([200, 404]);
+
+      // The successful response should have the correct format
+      const successResponse = responses.find((r) => r.status === 200);
+      const failResponse = responses.find((r) => r.status === 404);
+
+      expect(successResponse!.body).toMatchObject({
+        success: true,
+        message: 'Expense deleted successfully',
+        deletedId: createdExpense.id,
+      });
+
+      expect(failResponse!.body).toMatchObject({
+        success: false,
+        status: 'fail',
+        error: 'Expense not found',
+      });
+    });
+
+    it('should maintain referential integrity when deleting expenses', async () => {
+      // This test ensures that deleting an expense doesn't break the database
+      // and that other expenses remain unaffected
+
+      // Create another expense
+      const otherExpenseData = {
+        name: 'Unaffected Expense',
+        amount: 25.5,
+        currency: 'EUR',
+        category: 'Unaffected Category',
+        date: new Date('2024-01-12T12:00:00.000Z'),
+      };
+
+      const otherExpense = await prismaService
+        .getClient()
+        .expense.create({ data: otherExpenseData });
+
+      // Delete the first expense
+      await request(app)
+        .delete(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      // Verify the other expense is still accessible and unmodified
+      const response = await request(app)
+        .get(`/api/expenses/${otherExpense.id}`)
+        .expect(200);
+
+      expect(response.body.data).toMatchObject({
+        id: otherExpense.id,
+        name: 'Unaffected Expense',
+        amount: 25.5,
+        currency: 'EUR',
+        category: 'Unaffected Category',
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+
+      // Clean up
+      await request(app).delete(`/api/expenses/${otherExpense.id}`).expect(200);
+    });
+  });
+
   describe('GET /api/expenses', () => {
     beforeEach(async () => {
       // Create test data for pagination and filtering tests
