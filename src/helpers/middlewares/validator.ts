@@ -2,179 +2,262 @@ import { Request, Response, NextFunction } from 'express';
 import { ExpenseValidationRules } from '../../expenses/entity/expense.entity';
 import Logger from '../Logger';
 
-interface ValidationRule {
-  required?: boolean;
-  type?: 'string' | 'number' | 'date' | 'boolean';
-  minLength?: number;
-  maxLength?: number;
-  min?: number;
-  max?: number;
-  pattern?: RegExp;
-}
+// Validation middleware for creating expenses
+export const validateCreateExpense = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const errors: Array<{ field: string; message: string }> = [];
 
-interface ValidationSchema {
-  [key: string]: ValidationRule;
-}
-
-interface ValidationError {
-  field: string;
-  message: string;
-}
-
-export class ValidationService {
-  static validate(
-    data: Record<string, unknown>,
-    schema: ValidationSchema
-  ): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    for (const [field, rule] of Object.entries(schema)) {
-      const value = data[field];
-
-      // Check required fields
-      if (
-        rule.required &&
-        (value === undefined || value === null || value === '')
-      ) {
-        errors.push({ field, message: `${field} is required` });
-        continue;
-      }
-
-      // Skip validation if field is not provided and not required
-      if (value === undefined || value === null || value === '') {
-        continue;
-      }
-
-      // Type validation
-      if (rule.type) {
-        switch (rule.type) {
-          case 'string':
-            if (typeof value !== 'string') {
-              errors.push({ field, message: `${field} must be a string` });
-            }
-            break;
-          case 'number':
-            if (typeof value !== 'number' || isNaN(value)) {
-              errors.push({
-                field,
-                message: `${field} must be a valid number`,
-              });
-            }
-            break;
-          case 'date':
-            if (!(value instanceof Date) && !this.isValidDateString(value)) {
-              errors.push({ field, message: `${field} must be a valid date` });
-            }
-            break;
-          case 'boolean':
-            if (typeof value !== 'boolean') {
-              errors.push({ field, message: `${field} must be a boolean` });
-            }
-            break;
-        }
-      }
-
-      // String length validation
-      if (typeof value === 'string') {
-        if (rule.minLength && value.length < rule.minLength) {
-          errors.push({
-            field,
-            message: `${field} must be at least ${rule.minLength} characters long`,
-          });
-        }
-        if (rule.maxLength && value.length > rule.maxLength) {
-          errors.push({
-            field,
-            message: `${field} must be no more than ${rule.maxLength} characters long`,
-          });
-        }
-      }
-
-      // Number range validation
-      if (typeof value === 'number') {
-        if (rule.min !== undefined && value < rule.min) {
-          errors.push({
-            field,
-            message: `${field} must be at least ${rule.min}`,
-          });
-        }
-        if (rule.max !== undefined && value > rule.max) {
-          errors.push({
-            field,
-            message: `${field} must be no more than ${rule.max}`,
-          });
-        }
-      }
-
-      // Pattern validation
-      if (rule.pattern && typeof value === 'string') {
-        if (!rule.pattern.test(value)) {
-          errors.push({ field, message: `${field} format is invalid` });
-        }
-      }
-    }
-
-    return errors;
+  // Validate name
+  if (
+    !req.body.name ||
+    typeof req.body.name !== 'string' ||
+    req.body.name.trim().length === 0
+  ) {
+    errors.push({ field: 'name', message: 'name is required' });
+  } else if (req.body.name.length > ExpenseValidationRules.name.maxLength) {
+    errors.push({
+      field: 'name',
+      message: `name must be at most ${ExpenseValidationRules.name.maxLength} characters long`,
+    });
   }
 
-  private static isValidDateString(value: unknown): boolean {
-    if (typeof value !== 'string') return false;
-    const date = new Date(value);
-    return !isNaN(date.getTime());
+  // Validate amount
+  if (req.body.amount === undefined || req.body.amount === null) {
+    errors.push({ field: 'amount', message: 'amount is required' });
+  } else if (typeof req.body.amount !== 'number' || isNaN(req.body.amount)) {
+    errors.push({ field: 'amount', message: 'amount must be a number' });
+  } else if (req.body.amount < ExpenseValidationRules.amount.min) {
+    errors.push({
+      field: 'amount',
+      message: `amount must be at least ${ExpenseValidationRules.amount.min}`,
+    });
+  } else if (req.body.amount > ExpenseValidationRules.amount.max) {
+    errors.push({
+      field: 'amount',
+      message: `amount cannot exceed ${ExpenseValidationRules.amount.max}`,
+    });
   }
-}
 
-// Generic validation middleware factory
-export const validator = (schema: ValidationSchema) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    try {
-      const errors = ValidationService.validate(
-        req.body as Record<string, unknown>,
-        schema
-      );
+  // Validate currency
+  if (!req.body.currency || typeof req.body.currency !== 'string') {
+    errors.push({ field: 'currency', message: 'currency is required' });
+  } else if (
+    req.body.currency.length < ExpenseValidationRules.currency.minLength
+  ) {
+    errors.push({
+      field: 'currency',
+      message: `currency must be at least ${ExpenseValidationRules.currency.minLength} characters long`,
+    });
+  } else if (
+    req.body.currency.length > ExpenseValidationRules.currency.maxLength
+  ) {
+    errors.push({
+      field: 'currency',
+      message: `currency must be at most ${ExpenseValidationRules.currency.maxLength} characters long`,
+    });
+  } else if (!ExpenseValidationRules.currency.pattern.test(req.body.currency)) {
+    errors.push({ field: 'currency', message: 'currency format is invalid' });
+  }
 
-      if (errors.length > 0) {
-        Logger.warn(`Validation failed: ${JSON.stringify(errors)}`);
-        res.status(400).json({
-          success: false,
-          error: 'Validation failed',
-          details: errors,
-        });
-        return;
-      }
+  // Validate category
+  if (
+    !req.body.category ||
+    typeof req.body.category !== 'string' ||
+    req.body.category.trim().length === 0
+  ) {
+    errors.push({ field: 'category', message: 'category is required' });
+  } else if (
+    req.body.category.length > ExpenseValidationRules.category.maxLength
+  ) {
+    errors.push({
+      field: 'category',
+      message: `category must be at most ${ExpenseValidationRules.category.maxLength} characters long`,
+    });
+  }
 
-      Logger.debug(`Validation passed for ${req.method} ${req.path}`);
-      next();
-    } catch (error) {
-      Logger.error(`Validation middleware error: ${error}`);
-      res.status(500).json({
-        success: false,
-        error: 'Internal validation error',
+  // Validate date (optional)
+  if (req.body.date !== undefined) {
+    if (typeof req.body.date !== 'string') {
+      errors.push({
+        field: 'date',
+        message: 'date must be a valid ISO string',
       });
+    } else {
+      const date = new Date(req.body.date);
+      if (isNaN(date.getTime())) {
+        errors.push({
+          field: 'date',
+          message: 'date must be a valid ISO string',
+        });
+      }
     }
-  };
+  }
+
+  if (errors.length > 0) {
+    Logger.warn('Validation failed:', errors);
+    res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      details: errors,
+    });
+    return;
+  }
+
+  Logger.debug('Validation passed for POST /api/expenses');
+  next();
 };
 
-// Specific validators for expenses
-export const validateCreateExpense = validator(ExpenseValidationRules);
+// Validation middleware for updating expenses
+export const validateUpdateExpense = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const errors: Array<{ field: string; message: string }> = [];
 
-export const validateUpdateExpense = validator({
-  name: { ...ExpenseValidationRules.name, required: false },
-  amount: { ...ExpenseValidationRules.amount, required: false },
-  currency: { ...ExpenseValidationRules.currency, required: false },
-  category: { ...ExpenseValidationRules.category, required: false },
-  date: ExpenseValidationRules.date,
-});
+  // At least one field should be provided for update
+  const updateableFields = ['name', 'amount', 'currency', 'category', 'date'];
+  const providedFields = updateableFields.filter(
+    (field) => req.body[field] !== undefined
+  );
+
+  if (providedFields.length === 0) {
+    errors.push({
+      field: 'general',
+      message: 'At least one field must be provided for update',
+    });
+  }
+
+  // Validate name (if provided)
+  if (req.body.name !== undefined) {
+    if (
+      typeof req.body.name !== 'string' ||
+      req.body.name.trim().length === 0
+    ) {
+      errors.push({ field: 'name', message: 'name cannot be empty' });
+    } else if (req.body.name.length > ExpenseValidationRules.name.maxLength) {
+      errors.push({
+        field: 'name',
+        message: `name must be at most ${ExpenseValidationRules.name.maxLength} characters long`,
+      });
+    }
+  }
+
+  // Validate amount (if provided)
+  if (req.body.amount !== undefined) {
+    if (typeof req.body.amount !== 'number' || isNaN(req.body.amount)) {
+      errors.push({ field: 'amount', message: 'amount must be a number' });
+    } else if (req.body.amount < ExpenseValidationRules.amount.min) {
+      errors.push({
+        field: 'amount',
+        message: `amount must be at least ${ExpenseValidationRules.amount.min}`,
+      });
+    } else if (req.body.amount > ExpenseValidationRules.amount.max) {
+      errors.push({
+        field: 'amount',
+        message: `amount cannot exceed ${ExpenseValidationRules.amount.max}`,
+      });
+    }
+  }
+
+  // Validate currency (if provided)
+  if (req.body.currency !== undefined) {
+    if (typeof req.body.currency !== 'string') {
+      errors.push({ field: 'currency', message: 'currency must be a string' });
+    } else if (
+      req.body.currency.length < ExpenseValidationRules.currency.minLength
+    ) {
+      errors.push({
+        field: 'currency',
+        message: `currency must be at least ${ExpenseValidationRules.currency.minLength} characters long`,
+      });
+    } else if (
+      req.body.currency.length > ExpenseValidationRules.currency.maxLength
+    ) {
+      errors.push({
+        field: 'currency',
+        message: `currency must be at most ${ExpenseValidationRules.currency.maxLength} characters long`,
+      });
+    } else if (
+      !ExpenseValidationRules.currency.pattern.test(req.body.currency)
+    ) {
+      errors.push({ field: 'currency', message: 'currency format is invalid' });
+    }
+  }
+
+  // Validate category (if provided)
+  if (req.body.category !== undefined) {
+    if (
+      typeof req.body.category !== 'string' ||
+      req.body.category.trim().length === 0
+    ) {
+      errors.push({ field: 'category', message: 'category cannot be empty' });
+    } else if (
+      req.body.category.length > ExpenseValidationRules.category.maxLength
+    ) {
+      errors.push({
+        field: 'category',
+        message: `category must be at most ${ExpenseValidationRules.category.maxLength} characters long`,
+      });
+    }
+  }
+
+  // Validate date (if provided)
+  if (req.body.date !== undefined) {
+    if (typeof req.body.date !== 'string') {
+      errors.push({
+        field: 'date',
+        message: 'date must be a valid ISO string',
+      });
+    } else {
+      const date = new Date(req.body.date);
+      if (isNaN(date.getTime())) {
+        errors.push({
+          field: 'date',
+          message: 'date must be a valid ISO string',
+        });
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    Logger.warn('Validation failed:', errors);
+    res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      details: errors,
+    });
+    return;
+  }
+
+  Logger.debug('Validation passed for PUT /api/expenses/:id');
+  next();
+};
 
 export const validateExpenseId = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const id = parseInt(req.params['id'] || '', 10);
+  const idParam = req.params['id'] || '';
+
+  // Check if the ID contains a decimal point (reject decimal numbers)
+  if (idParam.includes('.')) {
+    Logger.warn(`Decimal expense ID provided: ${idParam}`);
+    res.status(400).json({
+      success: false,
+      error: 'Invalid expense ID',
+    });
+    return;
+  }
+
+  const id = parseInt(idParam, 10);
 
   if (isNaN(id) || id <= 0) {
-    Logger.warn(`Invalid expense ID provided: ${req.params['id']}`);
+    Logger.warn(`Invalid expense ID provided: ${idParam}`);
     res.status(400).json({
       success: false,
       error: 'Invalid expense ID',

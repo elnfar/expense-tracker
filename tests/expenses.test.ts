@@ -102,6 +102,117 @@ describe('Expenses API', () => {
     });
   });
 
+  describe('GET /api/expenses/:id', () => {
+    let createdExpense: any;
+
+    beforeEach(async () => {
+      // Create a test expense for ID-based retrieval tests
+      const expenseData = {
+        name: 'Test Expense for ID',
+        amount: 25.75,
+        currency: 'USD',
+        category: 'Testing',
+        date: new Date('2024-01-20T10:00:00.000Z'),
+      };
+
+      createdExpense = await prismaService
+        .getClient()
+        .expense.create({ data: expenseData });
+    });
+
+    it('should return expense by valid ID', async () => {
+      const response = await request(app)
+        .get(`/api/expenses/${createdExpense.id}`)
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        success: true,
+        data: {
+          id: createdExpense.id,
+          name: 'Test Expense for ID',
+          amount: 25.75,
+          currency: 'USD',
+          category: 'Testing',
+          date: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      });
+
+      // Verify the date is correctly formatted
+      expect(new Date(response.body.data.date)).toEqual(
+        new Date('2024-01-20T10:00:00.000Z')
+      );
+    });
+
+    it('should return 404 for non-existent expense ID', async () => {
+      const nonExistentId = 99999;
+
+      const response = await request(app)
+        .get(`/api/expenses/${nonExistentId}`)
+        .expect(404);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        status: 'fail', // Changed from 'error' to 'fail' (404 starts with 4)
+        error: 'Expense not found',
+      });
+    });
+
+    it('should return 400 for invalid expense ID format', async () => {
+      const response = await request(app)
+        .get('/api/expenses/invalid-id')
+        .expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for negative expense ID', async () => {
+      const response = await request(app).get('/api/expenses/-1').expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for zero expense ID', async () => {
+      const response = await request(app).get('/api/expenses/0').expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should return 400 for decimal expense ID', async () => {
+      // Decimal IDs are now properly rejected by our validation middleware
+      const response = await request(app).get('/api/expenses/1.5').expect(400);
+
+      expect(response.body).toMatchObject({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    });
+
+    it('should handle large valid expense ID', async () => {
+      const largeId = 2147483647; // Maximum 32-bit integer
+
+      const response = await request(app)
+        .get(`/api/expenses/${largeId}`)
+        .expect(404); // Should return 404 since it doesn't exist, not 400
+
+      expect(response.body).toMatchObject({
+        success: false,
+        status: 'fail', // Changed from 'error' to 'fail' (404 starts with 4)
+        error: 'Expense not found',
+      });
+    });
+  });
+
   describe('GET /api/expenses', () => {
     beforeEach(async () => {
       // Create test data for pagination and filtering tests
