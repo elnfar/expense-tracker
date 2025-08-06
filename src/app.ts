@@ -10,38 +10,30 @@ import {
 import prismaService from './db/prisma.service';
 import Logger from './helpers/Logger';
 
-// Create Express application
 const app: Application = express();
 
-// Initialize database connection
 try {
-  // Prisma service is initialized when imported
   Logger.info('✅ Prisma service initialized');
 } catch (error) {
   Logger.error('❌ Failed to initialize Prisma service:', error);
   process.exit(1);
 }
 
-// Initialize controllers
 const expensesController = new ExpensesController();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging middleware
 app.use((req: Request, _res: Response, next: NextFunction) => {
   Logger.http(`${req.method} ${req.path} - ${req.ip}`);
   next();
 });
 
-// Basic routes
 app.get('/api/ping', (_req: Request, res: Response) => {
   Logger.debug('Ping endpoint accessed');
   res.json({ message: 'pong' });
 });
 
-// Health check route
 app.get('/health', async (_req: Request, res: Response) => {
   try {
     const dbConnected = await prismaService.isConnected();
@@ -66,21 +58,16 @@ app.get('/health', async (_req: Request, res: Response) => {
   }
 });
 
-// Expense routes with validation middleware
-// POST /api/expenses - Create a new expense (with validation)
 app.post(
   '/api/expenses',
   validateCreateExpense,
   expensesController.createExpense
 );
 
-// GET /api/expenses - Get all expenses
 app.get('/api/expenses', expensesController.getAllExpenses);
 
-// GET /api/expenses/stats - Get expense statistics
 app.get('/api/expenses/stats', expensesController.getExpenseStats);
 
-// GET /api/expenses/search - Search expenses by category or date range
 app.get(
   '/api/expenses/search',
   (req: Request, res: Response, next: NextFunction) => {
@@ -101,14 +88,12 @@ app.get(
   }
 );
 
-// GET /api/expenses/:id - Get expense by ID (with ID validation)
 app.get(
   '/api/expenses/:id',
   validateExpenseId,
   expensesController.getExpenseById
 );
 
-// PUT /api/expenses/:id - Update expense (with validation)
 app.put(
   '/api/expenses/:id',
   validateExpenseId,
@@ -116,7 +101,6 @@ app.put(
   expensesController.updateExpense
 );
 
-// PATCH /api/expenses/:id - Partially update expense (with validation)
 app.patch(
   '/api/expenses/:id',
   validateExpenseId,
@@ -124,14 +108,12 @@ app.patch(
   expensesController.updateExpense
 );
 
-// DELETE /api/expenses/:id - Delete expense (with ID validation)
 app.delete(
   '/api/expenses/:id',
   validateExpenseId,
   expensesController.deleteExpense
 );
 
-// API routes summary endpoint
 app.get('/api', (_req: Request, res: Response) => {
   Logger.debug('API routes summary accessed');
   res.json({
@@ -154,7 +136,6 @@ app.get('/api', (_req: Request, res: Response) => {
   });
 });
 
-// 404 handler for unknown routes
 app.use('*', (req: Request, res: Response) => {
   Logger.warn(`404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
@@ -169,10 +150,8 @@ app.use('*', (req: Request, res: Response) => {
   });
 });
 
-// Error handling middleware (should be last)
 app.use(errorHandler);
 
-// Start server function
 export const startServer = (): void => {
   const server = app.listen(config.port, () => {
     Logger.info(`🚀 Server is running on port ${config.port}`);
@@ -183,7 +162,6 @@ export const startServer = (): void => {
     );
   });
 
-  // Graceful shutdown
   const shutdown = async () => {
     Logger.info('SIGTERM received. Shutting down gracefully...');
     server.close(async () => {
