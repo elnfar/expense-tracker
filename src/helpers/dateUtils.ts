@@ -12,7 +12,6 @@ export interface DateFormatOptions {
 }
 
 export class DateUtils {
-  // ISO string validation and parsing
   static isValidISOString(dateString: string): boolean {
     try {
       const date = new Date(dateString);
