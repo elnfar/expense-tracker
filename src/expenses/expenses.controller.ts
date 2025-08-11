@@ -189,6 +189,59 @@ export class ExpensesController {
     }
   );
 
+  // Search expenses with branching logic
+  public searchExpenses = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const { category, startDate, endDate } = req.query;
+      Logger.debug('Searching expenses', { category, startDate, endDate });
+
+      if (category && typeof category === 'string') {
+        // Search by category
+        const expenses =
+          await this.expensesService.getExpensesByCategory(category);
+
+        Logger.debug(
+          `Retrieved ${expenses.length} expenses for category: ${category}`
+        );
+        res.status(200).json({
+          success: true,
+          data: expenses,
+          count: expenses.length,
+          category,
+        });
+      } else if (
+        startDate &&
+        endDate &&
+        typeof startDate === 'string' &&
+        typeof endDate === 'string'
+      ) {
+        // Search by date range
+        const expenses = await this.expensesService.getExpensesByDateRange(
+          startDate,
+          endDate
+        );
+
+        Logger.debug(
+          `Retrieved ${expenses.length} expenses for date range: ${startDate} to ${endDate}`
+        );
+        res.status(200).json({
+          success: true,
+          data: expenses,
+          count: expenses.length,
+          dateRange: { startDate, endDate },
+        });
+      } else {
+        // Invalid parameters
+        Logger.warn('Invalid search parameters provided');
+        res.status(400).json({
+          success: false,
+          error:
+            'Please provide either category or both startDate and endDate parameters',
+        });
+      }
+    }
+  );
+
   // Update expense
   public updateExpense = catchAsync(
     async (req: Request, res: Response): Promise<void> => {

@@ -68,25 +68,7 @@ app.get('/api/expenses', expensesController.getAllExpenses);
 
 app.get('/api/expenses/stats', expensesController.getExpenseStats);
 
-app.get(
-  '/api/expenses/search',
-  (req: Request, res: Response, next: NextFunction) => {
-    const { category, startDate, endDate } = req.query;
-
-    if (category) {
-      expensesController.getExpensesByCategory(req, res, next);
-    } else if (startDate && endDate) {
-      expensesController.getExpensesByDateRange(req, res, next);
-    } else {
-      Logger.warn('Invalid search parameters provided');
-      res.status(400).json({
-        success: false,
-        error:
-          'Please provide either category or both startDate and endDate parameters',
-      });
-    }
-  }
-);
+app.get('/api/expenses/search', expensesController.searchExpenses);
 
 app.get(
   '/api/expenses/:id',

@@ -9,4 +9,6 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
+  // Run tests serially to avoid database conflicts
+  maxWorkers: 1,
 };
