@@ -38,7 +38,6 @@ class PrismaService {
     }
   }
 
-  // Health check method
   public async isConnected(): Promise<boolean> {
     try {
       await this.prisma.$queryRaw`SELECT 1`;
@@ -49,6 +48,5 @@ class PrismaService {
   }
 }
 
-// Export singleton instance
 export const prismaService = new PrismaService();
 export default prismaService;

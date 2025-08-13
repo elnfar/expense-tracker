@@ -25,7 +25,6 @@ export interface UpdateExpenseEntity {
   date?: Date;
 }
 
-// Validation rules for expense entity
 export const ExpenseValidationRules = {
   name: {
     required: true,

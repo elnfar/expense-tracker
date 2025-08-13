@@ -10,7 +10,6 @@ export const validateCreateExpense = (
 ): void => {
   const errors: Array<{ field: string; message: string }> = [];
 
-  // Validate name
   if (
     !req.body.name ||
     typeof req.body.name !== 'string' ||

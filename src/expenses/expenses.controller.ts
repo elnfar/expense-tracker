@@ -11,7 +11,6 @@ import {
 import Logger from '../helpers/Logger';
 import { PaginatedExpensesResult } from './expenses.repository';
 
-// Extend Request interface to include our custom properties
 interface RequestWithExpenseId extends Request {
   expenseId: number;
 }
@@ -23,7 +22,6 @@ export class ExpensesController {
     this.expensesService = new ExpensesService();
   }
 
-  // Create a new expense
   public createExpense = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       const createExpenseDto: CreateExpenseDto = req.body;
@@ -55,7 +53,6 @@ export class ExpensesController {
         category: req.query['category'] as string,
       };
 
-      // Remove undefined values
       Object.keys(query).forEach((key) => {
         if (query[key as keyof GetExpensesQuery] === undefined) {
           delete query[key as keyof GetExpensesQuery];
@@ -68,7 +65,6 @@ export class ExpensesController {
 
       // Check if result is paginated or simple array
       if (Array.isArray(result)) {
-        // Simple array response
         Logger.debug(`Retrieved ${result.length} expenses`);
         res.status(200).json({
           success: true,
@@ -190,6 +186,59 @@ export class ExpensesController {
         count: expenses.length,
         dateRange: { startDate, endDate },
       });
+    }
+  );
+
+  // Search expenses with branching logic
+  public searchExpenses = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const { category, startDate, endDate } = req.query;
+      Logger.debug('Searching expenses', { category, startDate, endDate });
+
+      if (category && typeof category === 'string') {
+        // Search by category
+        const expenses =
+          await this.expensesService.getExpensesByCategory(category);
+
+        Logger.debug(
+          `Retrieved ${expenses.length} expenses for category: ${category}`
+        );
+        res.status(200).json({
+          success: true,
+          data: expenses,
+          count: expenses.length,
+          category,
+        });
+      } else if (
+        startDate &&
+        endDate &&
+        typeof startDate === 'string' &&
+        typeof endDate === 'string'
+      ) {
+        // Search by date range
+        const expenses = await this.expensesService.getExpensesByDateRange(
+          startDate,
+          endDate
+        );
+
+        Logger.debug(
+          `Retrieved ${expenses.length} expenses for date range: ${startDate} to ${endDate}`
+        );
+        res.status(200).json({
+          success: true,
+          data: expenses,
+          count: expenses.length,
+          dateRange: { startDate, endDate },
+        });
+      } else {
+        // Invalid parameters
+        Logger.warn('Invalid search parameters provided');
+        res.status(400).json({
+          success: false,
+          error:
+            'Please provide either category or both startDate and endDate parameters',
+        });
+      }
     }
   );
 
