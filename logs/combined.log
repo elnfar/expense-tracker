@@ -817,3 +817,161 @@
 {"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33mInvalid expense ID provided: invalid-id\u001b[39m","timestamp":"2025-08-11 13:00:58:058"}
 {"level":"\u001b[33mwarn\u001b[39m","message":"\u001b[33mWarning message\u001b[39m","timestamp":"2025-08-11 13:00:58:058"}
 {"level":"\u001b[31merror\u001b[39m","message":"\u001b[31mError message\u001b[39m","timestamp":"2025-08-11 13:00:58:058"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m✅ Prisma service initialized\u001b[39m","timestamp":"2025-08-13 20:22:50:2250"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🚀 Server is running on port 8080\u001b[39m","timestamp":"2025-08-13 20:22:50:2250"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m📍 Environment: development\u001b[39m","timestamp":"2025-08-13 20:22:50:2250"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m🔗 Health check: http://localhost:8080/health\u001b[39m","timestamp":"2025-08-13 20:22:50:2250"}
+{"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32m💰 Expenses API: http://localhost:8080/api/expenses\u001b[39m","timestamp":"2025-08-13 20:22:50:2250"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:23:56:2356"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:23:56:2356"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /health - ::1\u001b[39m","timestamp":"2025-08-13 20:25:10:2510"}
+{"database":"connected","environment":"development","level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mHealth check performed\u001b[39m","port":8080,"status":"OK","timestamp":"2025-08-13 20:25:10:2510"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:24:2524"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:25:24:2524"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 0 expenses\u001b[39m","timestamp":"2025-08-13 20:25:24:2524"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:32:2532"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-13 20:25:32:2532"}
+{"amount":10.5,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"Test Expense","timestamp":"2025-08-13 20:25:32:2532"}
+{"id":1632,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-13 20:25:32:2532"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:39:2539"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:25:39:2539"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 20:25:39:2539"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:57:2557"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:57:2557"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:25:58:2558"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mHEAD /health - ::1\u001b[39m","timestamp":"2025-08-13 20:26:44:2644"}
+{"database":"connected","environment":"development","level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mHealth check performed\u001b[39m","port":8080,"status":"OK","timestamp":"2025-08-13 20:26:44:2644"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:26:58:2658"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mOPTIONS /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:26:58:2658"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 20:27:16:2716"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /health - ::1\u001b[39m","timestamp":"2025-08-13 20:27:23:2723"}
+{"database":"connected","environment":"development","level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mHealth check performed\u001b[39m","port":8080,"status":"OK","timestamp":"2025-08-13 20:27:23:2723"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:27:46:2746"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-13 20:27:46:2746"}
+{"amount":12.22,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"New Test","timestamp":"2025-08-13 20:27:46:2746"}
+{"id":1633,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-13 20:27:46:2746"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 20:29:09:299"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 21:35:58:3558"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 21:49:07:497"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:34:32:3432"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:34:32:3432"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:34:32:3432"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:34:50:3450"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:35:25:3525"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:35:25:3525"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:35:25:3525"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:37:25:3725"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:37:25:3725"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:37:25:3725"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:37:32:3732"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:37:32:3732"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:37:32:3732"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mDELETE /api/expenses/1633 - ::1\u001b[39m","timestamp":"2025-08-13 22:37:41:3741"}
+{"id":1633,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mDeleting expense\u001b[39m","timestamp":"2025-08-13 22:37:41:3741"}
+{"id":1633,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense deleted successfully\u001b[39m","timestamp":"2025-08-13 22:37:41:3741"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:37:49:3749"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:37:49:3749"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:37:49:3749"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:38:25:3825"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mDELETE /api/expenses/1632 - ::1\u001b[39m","timestamp":"2025-08-13 22:38:29:3829"}
+{"id":1632,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mDeleting expense\u001b[39m","timestamp":"2025-08-13 22:38:29:3829"}
+{"id":1632,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense deleted successfully\u001b[39m","timestamp":"2025-08-13 22:38:29:3829"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:38:44:3844"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-13 22:38:44:3844"}
+{"amount":11.99,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"New Expense","timestamp":"2025-08-13 22:38:44:3844"}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-13 22:38:44:3844"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:39:29:3929"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:39:29:3929"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:39:29:3929"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:42:59:4259"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:43:05:435"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:43:05:435"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:43:05:435"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPUT /api/expenses/1634 - ::1\u001b[39m","timestamp":"2025-08-13 22:43:12:4312"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for PUT /api/expenses/:id\u001b[39m","timestamp":"2025-08-13 22:43:12:4312"}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mUpdating expense\u001b[39m","timestamp":"2025-08-13 22:43:12:4312","updateData":{"amount":25.5,"category":"Entertainment","currency":"USD","date":"2025-08-13","name":"Updated Expense"}}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense updated successfully\u001b[39m","timestamp":"2025-08-13 22:43:12:4312"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:43:19:4319"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:43:19:4319"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:43:19:4319"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:43:38:4338"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPUT /api/expenses/1634 - ::1\u001b[39m","timestamp":"2025-08-13 22:44:09:449"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for PUT /api/expenses/:id\u001b[39m","timestamp":"2025-08-13 22:44:09:449"}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mUpdating expense\u001b[39m","timestamp":"2025-08-13 22:44:09:449","updateData":{"amount":22.22,"category":"Restaurant","currency":"USD","date":"2025-08-12","name":"new 2"}}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense updated successfully\u001b[39m","timestamp":"2025-08-13 22:44:09:449"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:45:44:4544"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:45:44:4544"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 1 expenses\u001b[39m","timestamp":"2025-08-13 22:45:44:4544"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:46:11:4611"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-13 22:46:11:4611"}
+{"amount":15.75,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"Test Edit Expense","timestamp":"2025-08-13 22:46:11:4611"}
+{"id":1635,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-13 22:46:11:4611"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:46:18:4618"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:46:18:4618"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:46:18:4618"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mGET /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mFetching expenses with query parameters\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mRetrieved 2 expenses\u001b[39m","timestamp":"2025-08-13 22:46:54:4654"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mDELETE /api/expenses/1634 - ::1\u001b[39m","timestamp":"2025-08-13 22:46:58:4658"}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mDeleting expense\u001b[39m","timestamp":"2025-08-13 22:46:58:4658"}
+{"id":1634,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense deleted successfully\u001b[39m","timestamp":"2025-08-13 22:46:58:4658"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPUT /api/expenses/1635 - ::1\u001b[39m","timestamp":"2025-08-13 22:47:11:4711"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for PUT /api/expenses/:id\u001b[39m","timestamp":"2025-08-13 22:47:11:4711"}
+{"id":1635,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mUpdating expense\u001b[39m","timestamp":"2025-08-13 22:47:11:4711","updateData":{"amount":15.72,"category":"Travel","currency":"USD","date":"2025-08-04","name":"Test Edit Expense 2"}}
+{"id":1635,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense updated successfully\u001b[39m","timestamp":"2025-08-13 22:47:11:4711"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mPOST /api/expenses - ::1\u001b[39m","timestamp":"2025-08-13 22:47:23:4723"}
+{"level":"\u001b[37mdebug\u001b[39m","message":"\u001b[37mValidation passed for POST /api/expenses\u001b[39m","timestamp":"2025-08-13 22:47:23:4723"}
+{"amount":12.22,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mCreating new expense\u001b[39m","name":"Test1","timestamp":"2025-08-13 22:47:23:4723"}
+{"id":1636,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense created successfully\u001b[39m","timestamp":"2025-08-13 22:47:23:4723"}
+{"level":"\u001b[35mhttp\u001b[39m","message":"\u001b[35mDELETE /api/expenses/1635 - ::1\u001b[39m","timestamp":"2025-08-13 22:47:29:4729"}
+{"id":1635,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mDeleting expense\u001b[39m","timestamp":"2025-08-13 22:47:29:4729"}
+{"id":1635,"level":"\u001b[32minfo\u001b[39m","message":"\u001b[32mExpense deleted successfully\u001b[39m","timestamp":"2025-08-13 22:47:29:4729"}

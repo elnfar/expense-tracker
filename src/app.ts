@@ -1,4 +1,5 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import config from './config';
 import { errorHandler } from './helpers/middlewares/errorHandler';
 import { expensesRouter, systemRouter } from './routes';
@@ -6,6 +7,25 @@ import prismaService from './db/prisma.service';
 import Logger from './helpers/Logger';
 
 const app: Application = express();
+
+// CORS configuration for frontend communication
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173', // Vite default port
+      'http://localhost:5174', // Vite alternative port
+      'http://localhost:5175', // Vite alternative port
+      'http://localhost:5176', // Vite alternative port
+      'http://localhost:5177', // Vite alternative port
+      'http://localhost:3000', // Create React App default
+      'http://localhost:3001', // Alternative React port
+      'http://localhost:5137', // Your specified frontend port
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

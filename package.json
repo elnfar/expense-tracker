@@ -38,7 +38,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",
+    "@types/cors": "^2.8.19",
     "better-sqlite3": "^12.2.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "prisma": "^5.0.0",
